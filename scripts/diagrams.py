@@ -128,7 +128,7 @@ def paradigms() -> None:
             text(ax, x + 1.6, y - 2.4, content, 9.6, S.INK, wrap=31)
         if i < 3:
             arrow(ax, x + w + 0.2, 51.25, x + w + gap - 0.2, 51.25, color=S.INK_2, lw=2, ms=16)
-    text(ax, 3, 66.5, "Where the engineering effort lives has moved four times", 17, S.INK, "bold")
+    text(ax, 3, 66.5, "Four phases of agent engineering: where the effort lives", 17, S.INK, "bold")
     text(ax, 3, 62.6, "The phases overlap and coexist today; each one was adopted to fix what the previous one could not.",
          10.5, S.INK_2)
     text(ax, 127, 0.8, "Summarised from Guo et al. 2026 (arXiv 2606.20683), Sec. 1.2 and 4", 8, S.INK_3,
@@ -333,7 +333,7 @@ def lifecycle_loop() -> None:
 def surveys_at_a_glance() -> None:
     fig, ax = canvas(13, 6.2, 130)
     papers = [
-        ("14 Jun 2026", "Agent System & Harness Design", "Guo, Han, Xu, Wang et al.\nCityU HK · Univ. of Sydney",
+        ("14 Jun 2026", "Agent System & Harness Design", "Guo, Han, Xu, Wang et al.\nCityU HK · Sydney · TokenRhythm",
          "29 pp · 262 refs", "Model + harness lens; six harness jobs; four paradigms; leaderboard analysis", S.BLUE, "primary"),
         ("14 Jul 2026", "Self-Improvements in Modern Agentic Systems", "Ren, ..., Zhuge, Schmidhuber\nJilin · KAUST · IDSIA",
          "97 pp", "What a self-improving agent updates (weights, prompts, memory, tools, code) and from which signal", S.GREEN, "companion"),
@@ -388,7 +388,7 @@ def report_card() -> None:
     text(ax, 3, 60.5, "My two cents: the harness report card", 17, S.INK, "bold")
     text(ax, 3, 57.1, "A score without these fields cannot be compared. Merged from the reporting checklists in all four surveys, "
                       "plus provenance, which none of them puts first.", 10.2, S.INK_2)
-    text(ax, 3, 53.8, "Fields in the Identity and Budget columns alone would have explained most of the 'ranking flips' "
+    text(ax, 3, 53.8, "Fields in the Identity, Budget and Provenance columns would explain many of the 'ranking flips' "
                       "on today's leaderboards.", 10.2, S.INK_2)
     text(ax, 122, 0.8, "Author's synthesis of arXiv 2606.20683 Sec. 7.6, 2607.13104 Sec. 8.1, 2608.20485 App. E, "
                        "2611.23260 Sec. 5.3", 8, S.INK_3, ha="right", va="bottom")

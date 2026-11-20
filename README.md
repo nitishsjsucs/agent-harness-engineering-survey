@@ -60,7 +60,7 @@
 
 | Role | Survey | Authors (lead … senior) and affiliations | Posted | Size |
 |---|---|---|---|---|
-| ⭐ **Primary** | [From Question Answering to Task Completion: A Survey on Agent System and Harness Design](https://arxiv.org/abs/2606.20683) | Jianyuan Guo … Kai Han, Chang Xu, Yunhe Wang · CityU Hong Kong, Univ. of Sydney, Peking Univ. | 14 Jun 2026 | 29 pp, 262 refs |
+| ⭐ **Primary** | [From Question Answering to Task Completion: A Survey on Agent System and Harness Design](https://arxiv.org/abs/2606.20683) | Jianyuan Guo … Kai Han, Chang Xu, Yunhe Wang · CityU Hong Kong, Univ. of Sydney, TokenRhythm, Peking Univ. | 14 Jun 2026 | 29 pp, 262 refs |
 | Companion | [Self-Improvements in Modern Agentic Systems: A Survey](https://arxiv.org/abs/2607.13104) | Zhe Ren … Mingchen Zhuge, Jürgen Schmidhuber · Jilin, KAUST, IDSIA | 14 Jul 2026 | 97 pp |
 | Companion | [Terminal Agents: A Survey of AI Agents in Command-Line Environments](https://arxiv.org/abs/2608.20485) | Yi Bin … Jingkuan Song, Heng Tao Shen · Tongji, SJTU, PolyU | 20 Aug 2026 | 52 pp, 186 works |
 | Companion | [Software Engineering for LLM-Based Agents: A Lifecycle-Oriented Survey](https://arxiv.org/abs/2611.23260) | Yifei Ge … Yang Liu, Zhi Jin · Nanjing, NTU, Peking | 3 Oct 2026 | 79 pp, 355 papers |
@@ -72,17 +72,13 @@
 ## The taxonomy at a glance
 
 ```mermaid
-flowchart LR
-    A["LLM agent"] --> M["Model<br/>(weights)"]
-    A --> H["Harness<br/>(runtime around the model)"]
-    H --> O["Observation<br/>what it sees"]
-    H --> C["Context<br/>what enters the window"]
-    H --> L["Control loop<br/>who acts, when to stop"]
-    H --> X["Action<br/>tools, MCP, shell"]
-    H --> S["State<br/>checkpoints, memory"]
-    H --> V["Verification & governance<br/>tests, sandbox, rollback"]
-    H -. "self-improvement<br/>(prompts, memory, tools, code)" .-> H
-    M -. "agentic RL" .-> M
+flowchart TB
+    A["LLM agent"] --> M["Model (weights)"]
+    A --> H["Harness (runtime around the model)"]
+    H --> O["Observation"] & C["Context"] & L["Control loop"]
+    H --> X["Action"] & S["State"] & V["Verification & governance"]
+    SI["Self-improvement:<br/>prompts, memory, tools, code"] -.->|updates| H
+    RL["Agentic RL"] -.->|updates| M
 ```
 
 | Survey | Its main taxonomy |
@@ -111,11 +107,11 @@ flowchart LR
 
 ## Key findings, with figures
 
-**1. Both levers are big.** On public Terminal-Bench 2.0 results, the same model moves 13.7–20.8 points across harnesses (median spread 13.6 points over 20 models), while a newer model inside a fixed harness adds about 30 points.
+**1. Both levers are about the same size.** On public Terminal-Bench 2.0 results, swapping the harness moves a model by a median of 13.6 points across 20 models (13.7–20.8 for the three showcased models). One model-generation step inside a fixed harness adds 11–19 points, and two or three steps add about 30.
 
 ![Harness vs model on Terminal-Bench 2.0](figures/charts/harness_vs_model_tb2.png)
 
-**2. In a controlled ablation, the harness beat the model tier.** With DeepSeek-V4 Flash and Pro under three harnesses on identical tasks, the model tier moved results by at most 2.5 points (not significant), and the harness moved them by up to 21.25 points. The size of the harness effect depended on the benchmark.
+**2. In a matched comparison, the harness beat the model tier.** With DeepSeek-V4 Flash and Pro under three harnesses on identical tasks, the model tier moved results by at most 2.5 points (not significant), and the harness moved them by up to 21.25 points. The size of the harness effect depended on the benchmark.
 
 ![Matched harness vs model ablation](figures/charts/terminal_harness_vs_model.png)
 
@@ -133,7 +129,7 @@ flowchart LR
 <td><b>7. A self-edited harness: 20% → 50% on SWE-bench</b><br><img src="figures/charts/dgm_self_improvement.png" alt="Darwin Gödel Machine results"></td>
 </tr>
 <tr>
-<td><b>8. Agent memory rarely forgets</b> (16 of 25 systems)<br><img src="figures/charts/memory_crud_coverage.png" alt="Memory CRUD coverage"></td>
+<td><b>8. Agent memory rarely deletes</b> (16 of 25 systems)<br><img src="figures/charts/memory_crud_coverage.png" alt="Memory CRUD coverage"></td>
 <td><b>9. Real-world evidence is a sliver</b> (37 of 570 contributions)<br><img src="figures/charts/se_lifecycle_evidence.png" alt="Lifecycle evidence"></td>
 </tr>
 <tr>
@@ -161,8 +157,8 @@ flowchart LR
 
 | Metric | Why | Source |
 |---|---|---|
-| Success rate **with a 95% CI** | Single runs mislead | all four |
-| **pass@k and pass^k** (all-pass@k) | Capability vs reliability | SE survey; harness survey |
+| Success rate **with a 95% CI** | Single runs mislead | terminal survey; self-improvement survey (seed variance) |
+| **pass@k and pass^k** (all-pass@k) | Capability vs reliability | SE survey |
 | **Cost per successful task** | Real economics | harness survey (value-aware objective) |
 | Median tokens, wall-clock, **timeout rate** | Where the budget goes | harness survey, Table 8 |
 | Final-window **verification** rate · **recovery** rate · **governance** triggers | Process quality | terminal survey (P5, P6, P7) |
@@ -173,11 +169,11 @@ flowchart LR
 
 ## My two cents
 
-1. **"It's the harness, not the model" is half true.** Model upgrades add about 30 points in a fixed harness. The model sets the ceiling, and the harness decides how much of it you reach.
+1. **"It's the harness, not the model" is half true.** One model-generation step adds 11–19 points in a fixed harness, about the same as the median harness spread. The model sets the ceiling, and the harness decides how much of it you reach.
 2. **Harness rankings are not stable facts.** Opus 4.6's Claude Code vs Terminus 2 order flips between TB 2.0 and the TB 2.1 re-run; GPT-5.5's Codex vs Terminus 2 order flips between tbench.ai and Vals AI.
 3. **Vendor CLIs at the bottom is not a scandal.** They are built for interactive, permissioned use, while top leaderboard harnesses are tuned, and sometimes literally searched, against the benchmark.
 4. **Cost is the missing axis.** Only 15.2% of Terminal-Bench trial records carry dollar cost. On TB 2.1, GPT-5.5 in Codex spends about 4× what it spends in Terminus 2 (≈$2.1k vs ≈$0.5k) for about 5 more points.
-5. **Governance, forgetting and feedback are blind spots.** One benchmark family scores governance; 16 of 25 memory systems cannot forget; 0 published papers link operations back to requirements.
+5. **Governance, deletion and feedback are blind spots.** One benchmark family scores governance; 16 of 25 memory systems have no clear delete step; none of 355 papers implements and evaluates a path from operations back to requirements.
 
 My proposal is a **harness report card** for every agent result:
 

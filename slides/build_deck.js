@@ -158,13 +158,13 @@ pres.addSection({ title: "Opening" });
   };
   stat(0.5, "58.0%", "Claude Opus 4.6 in Claude Code", "Terminal-Bench 2.0 accuracy", "orange");
   stat(6.73, "76.4%", "Claude Opus 4.6 in Meta-Harness", "same benchmark, same model weights", "blue");
-  s.addText("The only thing that changed is the code wrapped around the model. That code is the harness.",
+  s.addText("On paper, only the code wrapped around the model changed. That code is the harness.",
     { x: 0.5, y: 5.6, w: 12.3, h: 0.6, fontSize: 18, color: HEX.ink, margin: 0, isTextBox: true });
   s.addText("Source: Guo et al. 2026 (arXiv 2606.20683) Sec. 7.3; tbench.ai Terminal-Bench 2.0 leaderboard, accessed 19 Nov 2026",
     { x: 0.5, y: 6.75, w: 11.5, h: 0.35, fontSize: 10, color: HEX.ink3, margin: 0, isTextBox: true });
   s.addNotes(`Let me start with one number. On Terminal-Bench 2.0, Claude Opus 4.6 solves 58 percent of tasks when it runs inside Claude Code, ` +
     `and 76.4 percent when it runs inside a harness called Meta-Harness. Same model, same weights, same tasks. An 18-point gap. ` +
-    `The only thing that changed is the code around the model: what it sees, what tools it can call, what it remembers, when it stops, and how its work is checked. ` +
+    `On paper, the only thing that changed is the code around the model: what it sees, what tools it can call, what it remembers, when it stops, and how its work is checked. ` +
     `That code is what people now call the harness, and it is the subject of this talk.`);
 }
 
@@ -173,7 +173,7 @@ figureSlide("Opening", "$ cat papers.txt", "figures/diagrams/surveys_at_a_glance
   "One primary survey on harness design, plus three companions: self-improvement, terminals, AgentOps.",
   `Here are the four surveys. The primary one is "From Question Answering to Task Completion", by Guo and colleagues from City University of Hong Kong and the University of Sydney, posted in June. ` +
   `It gives the vocabulary for the whole talk. The second, from Schmidhuber's group at KAUST and IDSIA, is about agents that improve their own harness. ` +
-  `The third is a 52-page survey on terminal agents from Tongji University, which also runs its own controlled experiments. ` +
+  `The third is a 52-page survey on terminal agents from Tongji University, which also runs its own matched comparisons. ` +
   `The fourth, from Nanjing University, NTU and Peking University, treats agents as software and covers the full lifecycle, which is the AgentOps view. ` +
   `All four are within six months of today, and together they go from design, to self-improvement, to a deep case study, to shipping.`);
 
@@ -221,10 +221,10 @@ figureSlide("Taxonomy", "$ match --task --harness", "figures/diagrams/task_to_ha
 // 9. Harness vs model
 pres.addSection({ title: "Evidence" });
 figureSlide("Evidence", "$ leaderboard --same-model", "figures/charts/harness_vs_model_tb2.png",
-  "Harness spread: median 13.6 pts across 20 models. Model upgrade in a fixed harness: about 30 pts.",
+  "Median harness spread 13.6 pts; one model-generation step 11-19 pts. Comparable levers.",
   `Now the evidence. The harness survey treats public leaderboards as observational data. On the left, the same model under different harnesses on Terminal-Bench 2.0. ` +
   `GPT-5.3 Codex spans 13.7 points, Claude Opus 4.6 spans 18.4, Gemini 3.1 Pro spans 20.8. Across 20 models with at least three harnesses, the median spread is 13.6 points, and 14 of the 20 vary by at least 10. ` +
-  `But on the right, the survey is honest that it cuts both ways: inside a fixed harness, a newer model adds about 30 points. ` +
+  `But on the right, the survey is honest that it cuts both ways: inside a fixed harness, each newer model adds roughly 11 to 19 points. ` +
   `So both levers are big. I will come back to this in my two cents.`);
 
 // 10. Techniques
@@ -234,7 +234,7 @@ figureSlide("Evidence", "$ leaderboard --same-model", "figures/charts/harness_vs
   s.addText("Five techniques behind the top leaderboard entries", { placeholder: "title" });
   const items = [
     ["Searched harnesses", "Meta-Harness searches prompts, tools and policies; SageAgent generates its own scaffold. Powerful, but can overfit the benchmark.", "violet"],
-    ["Verify before 'done'", "Terminus-KIRA builds completion checks into the loop. Unforced agents verify near the end in only 24-37% of tasks.", "red"],
+    ["Verify before 'done'", "Terminus-KIRA builds completion checks into the loop. In one survey's runs the agent verified near the end in only 24-37% of tasks on 3 of 4 benchmarks.", "red"],
     ["Minimal, legible tools", "SWE-agent's agent-computer interface; the ~100-line mini-SWE-agent nearly matches OpenHands (76.8 vs 77.6).", "blue"],
     ["Pipelines for strong oracles", "Agentless and PatchPilot: localize, repair, validate. Cheaper, reproducible, strong on checkable tasks.", "aqua"],
     ["Spend context on purpose", "Top harnesses read far more: Meta-Harness uses ~9.5x Terminus 2's input tokens, and times out less.", "orange"],
@@ -306,11 +306,11 @@ figureSlide("Self-improvement", "$ agent --rewrite-self", "figures/diagrams/self
 // 17. DGM, then memory
 figureSlide("Self-improvement", "$ diff harness@v0 harness@vN", "figures/charts/dgm_self_improvement.png",
   "A frozen model with a self-edited harness went from 20% to 50% on SWE-bench.",
-  `Here is the headline example, the Darwin Gödel Machine. It keeps the foundation model frozen and lets an archive of coding agents rewrite their own source code, keeping only changes that score better. ` +
+  `Here is the headline example, the Darwin Gödel Machine. It keeps the foundation model frozen and lets coding agents rewrite their own source code, validating each variant and keeping an open-ended archive. ` +
   `Per the original paper, SWE-bench went from 20 to 50 percent, and Polyglot from 14 to about 31. ` +
   `What it discovered were harness features: better code-editing tools, long-context window management, and peer-review steps. In other words, it automated harness engineering.`, HEX.green);
 figureSlide("Self-improvement", "$ memory --gc", "figures/charts/memory_crud_coverage.png",
-  "16 of 25 memory systems have no real forgetting: memory that never forgets eventually lies to you.",
+  "16 of 25 memory systems have no clear delete step, and 10 lack maintenance (consolidation, forgetting).",
   `The survey also tabulates 25 agent memory systems by create, read, update and delete. Almost all of them write and read memory well. ` +
   `But 16 of the 25 have no real delete or forgetting mechanism, and 10 lack ongoing maintenance. For a long-running agent, memory that never forgets is memory that eventually lies to you. ` +
   `The survey's evaluation rules are worth adopting: report the whole improvement trajectory under a fixed budget, track regressions on tasks you could already solve, and never use the same judge to drive updates and to report results.`, HEX.blue);
@@ -321,7 +321,7 @@ figureSlide("AgentOps", "$ agentops --lifecycle", "figures/diagrams/agent_lifecy
   "Zero evaluated links from operations back to requirements or design: the feedback loop is broken.",
   `The fourth survey asks what happens after the demo works. If an agent is a product, how is it engineered across its life? The authors map 355 published papers onto five software lifecycle stages, from requirements to maintenance. ` +
   `Testing dominates with 215 papers, against only 26 on requirements: we are much better at measuring agents than at specifying what they should and should not do. ` +
-  `And the feedback loop is broken. They found zero implemented or evaluated links from operations back to requirements or design. Production incidents get patched locally and never reach the spec.`, HEX.red);
+  `And the feedback loop is broken. They found zero implemented or evaluated links from operations back to requirements or design. A few papers describe such a loop, but none builds and tests it.`, HEX.red);
 figureSlide("AgentOps", "$ evidence --real-world", "figures/charts/se_lifecycle_evidence.png",
   "Only 37 of 570 contributions carry evidence from real projects or production.",
   `Evidence quality is the other finding. Of 570 coded contributions, only 37, about six and a half percent, come with evidence from real projects or production; the rest is lab and benchmark evidence. ` +
@@ -336,8 +336,8 @@ figureSlide("AgentOps", "$ evidence --real-world", "figures/charts/se_lifecycle_
   const hdr = { bold: true, color: "FFFFFF", fill: { color: HEX.ink }, fontSize: 15 };
   const rows = [
     [{ text: "Metric", options: hdr }, { text: "What it tells you", options: hdr }, { text: "Source", options: hdr }],
-    ["Success rate with 95% CI", "Did it work, and how sure are we", "All four"],
-    ["pass@k and pass^k (all-pass@k)", "Capability vs reliability", "SE survey; harness survey"],
+    ["Success rate with 95% CI", "Did it work, and how sure are we", "Terminal; self-improvement"],
+    ["pass@k and pass^k (all-pass@k)", "Capability vs reliability", "SE survey"],
     ["Cost per successful task", "Real economics, not cost per attempt", "Harness survey"],
     ["Median tokens, wall-clock, timeout rate", "Where the budget goes", "Harness survey, Table 8"],
     ["Final-window verification rate", "Does it check before saying 'done'", "Terminal survey (P5)"],
@@ -369,16 +369,16 @@ figureSlide("My two cents", "$ two-cents --leaderboards", "figures/charts/leader
   s.addText("$ two-cents --critique", { placeholder: "kicker" });
   s.addText("Where I think the story is weaker than it sounds", { placeholder: "title" });
   const cards = [
-    ["'Harness, not model' is half true", "Model upgrades add ~30 pts in a fixed harness vs a 13.6-pt median harness spread. The model sets the ceiling; the harness decides how much of it you reach.", "blue"],
+    ["'Harness, not model' is half true", "One model-generation step adds 11-19 pts in a fixed harness, about the 13.6-pt median harness spread. The model sets the ceiling; the harness decides how much of it you reach.", "blue"],
     ["Vendor CLIs at the bottom is not a scandal", "Product CLIs are built for humans in the loop; leaderboard harnesses are tuned, some literally searched, for the benchmark. No one has tested transfer yet.", "orange"],
     ["Cost is the missing axis", "Only 15.2% of Terminal-Bench trial records carry cost. On TB 2.1, Codex spends ~4x Terminus 2 ($2.1k vs $0.5k) for +5 pts.", "yellow"],
-    ["Governance and forgetting are blind spots", "1 benchmark family scores governance; 16 of 25 memory systems cannot forget; 0 papers link operations back to requirements.", "red"],
+    ["Governance and deletion are blind spots", "1 benchmark family scores governance; 16 of 25 memory systems have no clear delete step; no evaluated ops-to-requirements link in 355 papers.", "red"],
   ];
   const w = 6.05, h = 2.2;
   cards.forEach(([t, b, c], i) => card(s, 0.5 + (i % 2) * (w + 0.2), 1.8 + Math.floor(i / 2) * (h + 0.2), w, h, t, b, c, { titleSize: 18, bodySize: 16 }));
   s.addText("Also check before citing: mixed model versions in one survey table; single-family, single-run diagnostics; published-only corpus in the SE survey.",
     { x: 0.5, y: 6.6, w: 12.2, h: 0.5, fontSize: 12, italic: true, color: HEX.ink2, margin: 0, isTextBox: true });
-  s.addNotes(`Four more critiques. First, "it's the harness, not the model" is half true. The survey's own numbers show model upgrades adding about 30 points in a fixed harness, against a median harness spread of 13.6. The terminal survey's "model tier barely matters" compares two variants of one model family. My reading: the model sets the ceiling, the harness decides how much of it you reach. ` +
+  s.addNotes(`Four more critiques. First, "it's the harness, not the model" is half true. The survey's own numbers show one model-generation step adding 11 to 19 points in a fixed harness, about the median harness spread of 13.6. The terminal survey's "model tier barely matters" compares two variants of one model family. My reading: the model sets the ceiling, the harness decides how much of it you reach. ` +
     `Second, vendor CLIs ranking low is not a scandal. Claude Code and Gemini CLI are built for interactive use with a human approving actions; leaderboard harnesses are tuned, and some literally searched, against the benchmark. ` +
     `Third, cost is the missing axis. Only 15 percent of trial records carry cost. On the 2.1 board, GPT-5.5 in Codex spends about four times what Terminus 2 does for five more points. ` +
     `Fourth, governance and forgetting are blind spots. The field optimizes for finishing tasks far more than for being safe to leave running. ` +

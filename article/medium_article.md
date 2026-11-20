@@ -4,7 +4,7 @@
 
 ![Agent = Model + Harness](../figures/diagrams/agent_model_plus_harness.png)
 
-Here is a number that should change how you read AI leaderboards. On Terminal-Bench 2.0, Claude Opus 4.6 solves **58.0%** of tasks when it runs inside Claude Code and **76.4%** when it runs inside Meta-Harness. It is the same model, with the same weights, on the same task set. The only thing that changed is the code wrapped around it.
+Here is a number that should change how you read AI leaderboards. On Terminal-Bench 2.0, Claude Opus 4.6 solves **58.0%** of tasks when it runs inside Claude Code and **76.4%** when it runs inside Meta-Harness. It is the same model, with the same weights, on the same task set. On paper, the only thing that changed is the code wrapped around it. (Public submissions can also differ in prompts and budgets, a caveat I come back to.)
 
 That wrapper has a name now: the **harness**. It decides what the model sees, what it is allowed to do, what it remembers, when it stops, and how its work gets checked. In 2026, "harness engineering" went from a phrase in engineering blogs to the organizing idea of several serious surveys. I read four of them, all posted to arXiv between June and October 2026, and this article is my attempt to pull them into one picture: the taxonomy, the techniques behind the top leaderboard entries, the ablation-style evidence, the metrics that matter, and where I think the story is weaker than it sounds.
 
@@ -12,8 +12,8 @@ That wrapper has a name now: the **harness**. It decides what the model sees, wh
 
 - An agent is a model plus a harness, and a benchmark score belongs to the pair, not to the model.
 - The harness has six jobs: observation, context, control, action, state, and verification/governance. Each one has a trade-off, and fixing one tends to push risk into another.
-- On public leaderboards the harness moves a fixed model by roughly 14 to 21 points. A model generation upgrade inside a fixed harness moves it by about 30. Both levers are big.
-- In a controlled experiment, swapping the harness changed results by up to 21 points while upgrading the model tier changed them by at most 2.5.
+- On public leaderboards, swapping the harness moves a fixed model by a median of 13.6 points (up to about 21 for the best-known models). One model-generation step inside a fixed harness adds roughly 11 to 19 points. The two levers are about the same size.
+- In a matched comparison run by the terminal-agents survey, swapping the harness changed results by up to 21 points while switching the model tier changed them by at most 2.5.
 - Harness rankings are not stable. They flip when the benchmark version changes and when a different team runs the evaluation.
 - The weakest parts of current practice are cost reporting, governance, forgetting, and feeding production lessons back into design.
 
@@ -25,7 +25,7 @@ That wrapper has a name now: the **harness**. It decides what the model sees, wh
 
 | # | Survey | Authors (lead → senior) | Posted | Why it is here |
 |---|---|---|---|---|
-| 1 | *From Question Answering to Task Completion: A Survey on Agent System and Harness Design* ([arXiv 2606.20683](https://arxiv.org/abs/2606.20683)) | Jianyuan Guo … Kai Han, Chang Xu, Yunhe Wang (CityU Hong Kong, Univ. of Sydney, Peking Univ.) | 14 Jun 2026 | **Primary.** Gives the model-plus-harness formalism, the six-part anatomy, and a leaderboard analysis across SWE-bench, Terminal-Bench and WebArena. |
+| 1 | *From Question Answering to Task Completion: A Survey on Agent System and Harness Design* ([arXiv 2606.20683](https://arxiv.org/abs/2606.20683)) | Jianyuan Guo … Kai Han, Chang Xu, Yunhe Wang (CityU Hong Kong, Univ. of Sydney, TokenRhythm, Peking Univ.) | 14 Jun 2026 | **Primary.** Gives the model-plus-harness formalism, the six-part anatomy, and a leaderboard analysis across SWE-bench, Terminal-Bench and WebArena. |
 | 2 | *Self-Improvements in Modern Agentic Systems: A Survey* ([arXiv 2607.13104](https://arxiv.org/abs/2607.13104)) | Zhe Ren … Mingchen Zhuge, Jürgen Schmidhuber (Jilin, KAUST, IDSIA) | 14 Jul 2026 | What happens when the harness rewrites itself: prompts, memory, tools and code. |
 | 3 | *Terminal Agents: A Survey of AI Agents in Command-Line Environments* ([arXiv 2608.20485](https://arxiv.org/abs/2608.20485)) | Yi Bin … Jingkuan Song, Heng Tao Shen (Tongji, SJTU, PolyU) | 20 Aug 2026 | A deep case study of one environment, with the authors' own matched harness experiments. |
 | 4 | *Software Engineering for LLM-Based Agents: A Lifecycle-Oriented Survey* ([arXiv 2611.23260](https://arxiv.org/abs/2611.23260)) | Yifei Ge … Yang Liu, Zhi Jin (Nanjing, NTU, Peking) | 3 Oct 2026 | The AgentOps view: how agents are specified, tested, monitored and maintained as software. |
@@ -36,7 +36,7 @@ Read in order, they follow a harness from design, to self-improvement, to a hard
 
 ---
 
-## Part 1: Where the engineering effort lives has moved four times
+## Part 1: Four phases of agent engineering
 
 ![Four paradigms](../figures/diagrams/four_paradigms.png)
 
@@ -59,7 +59,7 @@ The survey formalizes an agent as a pair of model and harness, and then splits t
 
 **1. Observation.** This is how raw signals become model input: terminal output, diffs, DOM trees, screenshots, logs. A lot of agent failures turn out to be *legibility* failures. The information the model needed was missing, buried in noise, or stale. The key technique here is the **Agent-Computer Interface (ACI)** popularized by SWE-agent. Instead of raw `cat` and `sed`, the agent gets a small set of search, view and edit commands whose output is shaped for a language model, such as windowed file views and concise error messages. The survey points out that ACI redesign alone improved SWE-bench results with the base model held fixed.
 
-**2. Context.** This decides what enters the window, in what form, and when it gets refreshed. The survey argues the important distinction is between a *monolithic* context and a *managed* one, and that prompt length matters less. Techniques include compaction (summarizing old turns), "folding" finished sub-tasks into short notes, loading skills and tool docs only on demand, and writing task state to files instead of carrying it in the transcript.
+**2. Context.** This decides what enters the window, in what form, and when it gets refreshed. The survey argues the important distinction is between a *monolithic* context and a *managed* one, and that prompt length matters less. Techniques include compaction (summarizing old turns), loading skills and tool docs only on demand, and writing task state to files instead of carrying it in the transcript. The terminal-agents survey adds "context folding", which collapses a finished sub-task into a short note.
 
 **3. Control loop.** This decides who acts next and when to stop. The options run from a plain ReAct loop, to plan-execute-verify, to hierarchical sub-agents and model routing, where a cheap model handles easy steps and a strong one handles hard ones. The trade-off is adaptability against stability.
 
@@ -94,11 +94,11 @@ This is where the harness survey earns its place. It treats public leaderboards 
 
 ![Harness vs model on Terminal-Bench 2.0](../figures/charts/harness_vs_model_tb2.png)
 
-**Same model, different harness.** On Terminal-Bench 2.0, GPT-5.3 Codex ranges from 64.7% (Terminus 2) to 78.4% (SageAgent), a spread of 13.7 points. Claude Opus 4.6 ranges from 58.0% (Claude Code) to 76.4% (Meta-Harness), 18.4 points. Gemini 3.1 Pro ranges from 59.4% (Gemini CLI) to 80.2% (TongAgents), 20.8 points. Across the 20 models that appear with at least three harnesses, the median spread is 13.6 points, and 14 of the 20 vary by at least 10.
+**Same model, different harness.** On Terminal-Bench 2.0, GPT-5.3 Codex ranges from 64.7% (Terminus 2) to 78.4% (SageAgent), a spread of 13.7 points. Claude Opus 4.6 ranges from 58.0% (Claude Code) to 76.4% (Meta-Harness), 18.4 points. Gemini 3.1 Pro ranges from 59.4% (Gemini CLI) to 80.2% (TongAgents), 20.8 points. (The live board now lists 61.4% for Gemini CLI, so that spread is 18.8 today.) Across the 20 models that appear with at least three harnesses, the median spread is 13.6 points, and 14 of the 20 vary by at least 10.
 
-**Same harness, newer model.** The survey is honest that this cuts both ways. Inside Terminus 2, moving from GPT-5 to GPT-5.3 Codex lifts the score from 35.2% to 64.7%. Inside Codex CLI, moving from GPT-5 to GPT-5.5 lifts it from 49.6% to 82.2%. That is roughly 30 points per model jump, bigger than the typical harness spread.
+**Same harness, newer model.** The survey is honest that this cuts both ways. Inside Terminus 2, GPT-5 scores 35.2%, GPT-5.2 scores 54.0% and GPT-5.3 Codex scores 64.7%. Inside Codex CLI, the sequence GPT-5, GPT-5.2, GPT-5.5 goes 49.6%, 62.9%, 82.2%. Each listed step adds roughly 11 to 19 points, about the same as the median harness spread, and two or three steps add about 30.
 
-On SWE-bench Verified the picture is similar. GPT-4o resolves 23.2% of issues under the original SWE-agent and 38.8% under Agentless. One finding I like: under Claude Opus 4.5, the roughly 100-line mini-SWE-agent scores 76.8%, almost the same as the full OpenHands runtime at 77.6%. Adding more scaffolding does not automatically help.
+On SWE-bench Verified the picture is similar. GPT-4o resolves 23.2% of issues under the original SWE-agent and 38.8% under Agentless. One finding I like: under Claude Opus 4.5 with extended thinking, the roughly 100-line mini-SWE-agent scores 76.8%, within a point of the full OpenHands runtime at 77.6% (the same source reports 74.4% for mini-SWE-agent at medium reasoning). Adding more scaffolding does not automatically help.
 
 On the web the effect is even larger, because a bare model is so weak at browsing.
 
@@ -111,7 +111,7 @@ GPT-4o goes from 13.1% as a bare model to 54.6% with WebOperator. Llama-3.1-8B g
 Reading the harness descriptions in the survey and on the leaderboards, the high-scoring systems share a small set of moves:
 
 - **Searched or generated harnesses.** Meta-Harness treats prompts, tools and runtime policies as a search space and optimizes them against the benchmark. SageAgent uses an agent-generation engine to write and refine its own scaffold. This is the "learnable harness" idea in practice, and it is powerful. It also carries an obvious risk of overfitting to the benchmark it is searched on.
-- **Verification before stopping.** Terminus-KIRA's design centres on completion checks before the agent declares success. As Part 4 shows, unforced agents often skip this step, so building it into the loop is one of the cheapest wins available.
+- **Verification before stopping.** Terminus-KIRA's design centres on completion checks before the agent declares success. As Part 4 shows, an agent left to itself often skips this step, so building it into the loop is one of the cheapest wins available.
 - **Minimal, legible action spaces.** mini-SWE-agent and Mux show that a small, transparent tool loop on a strong model is a very competitive baseline. Simple harnesses are also much easier to debug.
 - **Structured pipelines when the oracle is strong.** Agentless and PatchPilot replace the open-ended loop with fixed localize, repair and validate stages. They are cheaper and more reproducible, and they compete well on narrow, checkable tasks.
 - **Spending tokens on context, on purpose.** The best harnesses often read a lot more than the reference harness does.
@@ -122,7 +122,7 @@ That last point is the most under-discussed result in the survey. For Opus 4.6, 
 
 ---
 
-## Part 4: Deep dive on terminal agents, including a real ablation
+## Part 4: Deep dive on terminal agents, with a matched harness-vs-model comparison
 
 The *Terminal Agents* survey zooms into the environment where most coding agents actually work. It defines a terminal agent by its execution substrate rather than by its interface. If running commands, reading their output and changing persistent state is what drives progress, it counts as a terminal agent. A chat assistant that happens to have a CLI wrapper does not.
 
@@ -130,9 +130,9 @@ The *Terminal Agents* survey zooms into the environment where most coding agents
 
 It describes the architecture as four layers on top of the model: interface and observation, runtime and workspace, control and verification, and harness and context. It also proposes a **seven-dimensional competence profile**: command formulation, feedback interpretation, runtime management, state tracking, progress verification, recovery, and governance. These are responsibilities of the whole system, spread across the layers, not abilities of the model alone.
 
-### The ablation: change the harness or change the model?
+### Ablation-style evidence: change the harness or change the model?
 
-What sets this survey apart is that the authors ran their own matched experiment. They used two DeepSeek-V4 variants (Flash and the larger Pro) under three harnesses (mini-SWE-agent, SWE-agent, OpenHands) on identical task sets, with temperature 0, one run per task, and paired statistical tests.
+What sets this survey apart is that the authors ran their own matched comparison, which they call a bounded diagnostic rather than a leaderboard. They used two DeepSeek-V4 variants (Flash and the larger Pro) under three harnesses (mini-SWE-agent, SWE-agent, OpenHands) on identical task sets, with temperature 0, one run per task, and paired statistical tests.
 
 ![Harness vs model ablation](../figures/charts/terminal_harness_vs_model.png)
 
@@ -146,7 +146,7 @@ They also ran one fixed agent (mini-SWE-agent with V4-Flash) across four benchma
 
 ![Benchmark process profile](../figures/charts/terminal_benchmark_profile.png)
 
-Each benchmark exposes a different weakness. SetupBench stresses environment bootstrapping. LongCLI-Bench has the lowest success (23.8%) and the hardest long-horizon demands. BashArena shows the most state-tracking errors and governance-relevant commands. The agent ran a verification step near the end of only 24 to 37% of tasks on three of the benchmarks.
+Each benchmark exposes a different weakness. SetupBench stresses environment bootstrapping. LongCLI-Bench has the lowest success (23.8%) and the hardest long-horizon demands. BashArena shows the most state-tracking errors, and LongCLI-Bench triggers governance review most often. The agent ran a verification step near the end of only 24 to 37% of tasks on three of the benchmarks.
 
 ![Observability matrix](../figures/charts/terminal_observability.png)
 
@@ -168,7 +168,7 @@ The taxonomy is two-dimensional: *what* gets updated and *which signal* drives t
 - **Tools** can be routed, refined or written from scratch (Voyager, SkillWeaver, DRAFT, Alita).
 - **The whole scaffold** can be patched as code, with each change gated by tests (ADAS, Gödel Agent, Darwin Gödel Machine, AlphaEvolve).
 
-The headline example is the Darwin Gödel Machine. It keeps the foundation model frozen and lets an archive of coding agents rewrite their own source code, keeping only changes that score better.
+The headline example is the Darwin Gödel Machine. It keeps the foundation model frozen and lets coding agents rewrite their own source code. Each new variant is validated on coding benchmarks and added to an open-ended archive, which keeps diverse agents rather than only the current best.
 
 ![DGM](../figures/charts/dgm_self_improvement.png)
 
@@ -178,7 +178,7 @@ The survey also tabulates 25 memory systems, and one gap stands out.
 
 ![Memory CRUD](../figures/charts/memory_crud_coverage.png)
 
-Almost every system writes and reads memory, but 16 of the 25 have no real delete or forgetting mechanism. For a long-running agent, memory that never forgets is memory that eventually lies to you.
+Almost every system writes and reads memory, but 16 of the 25 have no clear delete operation, and 10 have no ongoing maintenance, which is the survey's category for consolidation, refresh and forgetting. For a long-running agent, memory that never forgets is memory that eventually lies to you.
 
 On evaluation, the survey makes three recommendations I would adopt as rules:
 
@@ -192,7 +192,7 @@ Its safety advice is "layered gating": treat a self-modifying agent like untrust
 
 ## Part 6: Shipping it, the AgentOps view
 
-The fourth survey asks the question that matters once a demo works. If an agent is a product, how is it engineered across its life? The authors map 355 published papers onto five software lifecycle stages.
+The fourth survey asks the question that matters once a demo works. If an agent is a product, how is it engineered across its life? The authors map 355 papers with publication evidence onto five software lifecycle stages.
 
 ![Lifecycle loop](../figures/diagrams/agent_lifecycle_loop.png)
 
@@ -202,7 +202,7 @@ Three findings stood out to me:
 
 - **Testing dominates.** 215 of the 355 papers address testing and assurance, against only 26 for requirements. The field is much better at measuring agents than at specifying what they should and should not do.
 - **Evidence is mostly lab-grade.** Of 570 coded contributions, only 37 come with evidence from real projects or production. That is about 6.5%.
-- **The feedback loop is broken.** The authors found no implemented or evaluated link from operations back to requirements or design. Production incidents get patched locally and do not flow back into the spec.
+- **The feedback loop is broken.** The authors found no implemented or evaluated link from operations back to requirements or design. A few papers describe such a loop, but none builds and tests it, so in the literature production incidents get patched locally and rarely flow back into the spec.
 
 The survey's motivating example is Anthropic's multi-agent research system. The team could not tell whether bad answers came from the queries, the source selection or the tools until they added production tracing. Long-running stateful agents also forced rolling deployments in which old and new versions ran side by side. These are software-engineering problems, not model problems.
 
@@ -221,8 +221,8 @@ Pulling the four surveys together, this is the metric set I would want on any ag
 
 | Metric | What it tells you | Where it comes from |
 |---|---|---|
-| Success rate with a 95% CI | Did it work, and how sure are we | All four |
-| pass@k and pass^k (all-pass@k) | Capability versus reliability | SE survey; harness survey ("Rel_k") |
+| Success rate with a 95% CI | Did it work, and how sure are we | Terminal survey (Wilson CIs); self-improvement survey (variance over seeds) |
+| pass@k and pass^k (all-pass@k) | Capability versus reliability | SE survey (pass@3 vs all-pass@3); harness survey asks for repeated-run reliability |
 | Cost per successful task | Real economics, not cost per attempt | Harness survey (value-aware objective) |
 | Median tokens, wall-clock, timeout rate | Where the budget goes | Harness survey, Table 8 |
 | P95 latency | User-facing speed | Harness survey |
@@ -240,7 +240,7 @@ The harness survey wraps several of these into a "value-aware" objective: maximi
 
 ### 1. "It's the harness, not the model" is half true
 
-The harness-first framing is a useful correction to model-only leaderboards, but the survey's own numbers show model upgrades moving Terminal-Bench by about 30 points inside a fixed harness, against a median harness spread of 13.6. The terminal survey's clean "model tier barely matters" result compares two variants of one model family. My reading is that the model sets the ceiling and the harness decides how much of it you actually reach. If you are choosing where to spend engineering time, the harness is usually the cheaper lever. That does not make it the larger one.
+The harness-first framing is a useful correction to model-only leaderboards, but the survey's own numbers show a single model-generation step adding 11 to 19 points inside a fixed harness, about the same as the 13.6-point median harness spread, and two or three steps adding about 30. The terminal survey's clean "model tier barely matters" result compares two variants of one model family. My reading is that the model sets the ceiling and the harness decides how much of it you actually reach. If you are choosing where to spend engineering time, the harness is usually the cheaper lever. That does not make it the larger one.
 
 ### 2. Harness rankings are not stable facts
 
@@ -257,7 +257,7 @@ The benchmark version and the team running the evaluation can matter as much as 
 
 ### 3. Vendor CLIs at the bottom is not a scandal
 
-Claude Code and Gemini CLI sit near the bottom of the ranges for their own models on Terminal-Bench 2.0. I do not think that means they are bad harnesses. Product CLIs are built for interactive work with permission prompts and a human in the loop, while leaderboard harnesses are tuned for unattended, benchmark-shaped tasks. Some top harnesses are literally searched against the benchmark. The surveys call for testing whether harness gains transfer across tasks and model families. Nobody has reported that test yet, and until someone does, I would discount benchmark-tuned harness results.
+Claude Code and Gemini CLI sit near the bottom of the ranges for their own models on Terminal-Bench 2.0. I do not think that means they are bad harnesses. Product CLIs are built for interactive work with permission prompts and a human in the loop, while leaderboard harnesses are tuned for unattended, benchmark-shaped tasks. Some top harnesses are literally searched against the benchmark. The surveys call for testing whether harness gains transfer across tasks and model families, but none of the four reports such a test. Until someone does, I would discount benchmark-tuned harness results.
 
 ### 4. Cost is the missing axis
 
@@ -265,17 +265,17 @@ Only 15.2% of Terminal-Bench trial records carry dollar-cost fields, and the har
 
 ### 5. Governance and forgetting are the blind spots
 
-Governance is explicitly scored by one benchmark family. Forgetting is missing from 16 of 25 memory systems. Operational feedback reaches requirements in none of the 355 papers. All three gaps point the same way: the field optimizes for *finishing tasks* far more than for *being safe to leave running*. That is fine for a benchmark and not fine for production.
+Governance is explicitly scored by one benchmark family. Deletion is absent or unclear in 16 of 25 memory systems. None of the 355 papers implements and evaluates a path from operations back to requirements. All three gaps point the same way: the field optimizes for *finishing tasks* far more than for *being safe to leave running*. That is fine for a benchmark and not fine for production.
 
 ### 6. A few things to check before you cite these surveys
 
-All four are recent first versions, and each has rough edges. The harness survey's Table 7 groups different model versions under one row label, and some of its percentages and percentage-point figures are mixed up. The terminal survey's diagnostics use a single model family, a single run per task, and an LLM judge from the same family as the agent. The self-improvement survey reports almost no numbers of its own; its evidence lives in the primary papers. The SE survey analyses only formally published papers, which leaves out most of the preprints, vendor posts and open-source work where AgentOps practice actually happens. None of this undermines their taxonomies, but it is a reason to check the primary source behind any number you cite.
+All four are recent first versions, and each has rough edges. The harness survey's Table 7 groups different model versions under one row label, and some of its percentages and percentage-point figures are mixed up. The terminal survey's diagnostics use a single model family, a single run per task, and an LLM judge from the same family as the agent. The self-improvement survey reports almost no numbers of its own; its evidence lives in the primary papers. The SE survey analyses only papers with publication or acceptance evidence, which leaves out most of the preprints, vendor posts and open-source work where AgentOps practice actually happens. None of this undermines their taxonomies, but it is a reason to check the primary source behind any number you cite.
 
 ### My synthesis: the harness report card
 
 ![Harness report card](../figures/diagrams/harness_report_card.png)
 
-If I could add one convention to the field, it would be this card. Every agent result should state which model and harness were used, the budget, the outcome with uncertainty, a few process signals, and who ran the evaluation. The identity and budget fields alone would explain most of the ranking flips above.
+If I could add one convention to the field, it would be this card. Every agent result should state which model and harness were used, the budget, the outcome with uncertainty, a few process signals, and who ran the evaluation. The identity, budget and provenance fields would explain many of the ranking flips above.
 
 ---
 

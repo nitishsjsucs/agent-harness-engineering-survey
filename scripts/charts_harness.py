@@ -59,7 +59,7 @@ def harness_and_model_axes() -> None:
     a2.set_ylabel("Terminal-Bench 2.0 accuracy (%)")
     a2.set_title("Same harness, newer model", fontsize=12.5)
 
-    S.header(fig, "Both levers are big: the harness can add ~14-21 points, a model generation ~30",
+    S.header(fig, "Comparable levers: a harness swap moves a model 14-21 pts; one model step adds 11-19",
              "Public Terminal-Bench 2.0 results compiled in the harness survey (5 trials per task, official leaderboard)")
     fig.tight_layout()
     S.source(fig, "Data: Guo et al., \"From Question Answering to Task Completion\" (arXiv 2606.20683), "
@@ -153,7 +153,7 @@ def dgm() -> None:
     ax.set_ylabel("Solved (%)")
     ax.legend(loc="upper right")
     S.header(fig, "Same frozen model, self-edited harness: 2.5x on SWE-bench",
-             "Darwin Gödel Machine rewrites its own agent code and keeps only changes that pass benchmarks")
+             "Darwin Gödel Machine rewrites its own agent code; each variant is benchmark-validated and kept in an open-ended archive")
     S.source(fig, "Data: Zhang et al., Darwin Gödel Machine (arXiv 2505.22954, abstract), a system reviewed "
                   "in the self-improvement survey (arXiv 2607.13104, Sec. 6.4).")
     S.save(fig, "dgm_self_improvement")
@@ -181,7 +181,7 @@ def memory_crud() -> None:
     ax.grid(axis="y", visible=False)
     ax.set_xlabel("Number of the 25 memory systems tabulated in the survey")
     ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=3, frameon=False)
-    S.header(fig, "Agent memory can write and read, but rarely forgets",
+    S.header(fig, "Agent memory writes and reads, but rarely deletes",
              "How strongly 25 published memory systems implement each memory operation", )
     S.source(fig, "Data: Ren et al., \"Self-Improvements in Modern Agentic Systems\" (arXiv 2607.13104), "
                   "Table 4, counted from the rendered table.")
