@@ -1,0 +1,17 @@
+model,harness,resolved_pct,resolved_of_500,cost_usd,source
+GPT-4o,SWE-agent,23.2,116,,arXiv 2606.20683 Table 7
+GPT-4o,AutoCodeRover-v2,38.4,192,,arXiv 2606.20683 Table 7
+GPT-4o,Agentless,38.8,194,,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,SWE-agent (20240620),33.6,168,,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,SWE-agent + tools,49.0,245,,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,Agentless,50.8,254,1.19,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,AutoCodeRover,51.8,259,4.50,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,OpenHands + CodeAct 2.1,53.0,265,0.78,arXiv 2606.20683 Table 7
+Claude 3.5 Sonnet,PatchPilot,53.6,268,0.99,arXiv 2606.20683 Table 7
+Claude Sonnet 4,mini-SWE-agent,64.9,325,,arXiv 2606.20683 Table 7
+Claude Sonnet 4,OpenHands + CodeAct 2.1,70.4,352,,arXiv 2606.20683 Table 7
+Claude Sonnet 4,SWE-agent + tools,72.4,362,,arXiv 2606.20683 Table 7
+Claude Sonnet 4,Vendor scaffold,72.7,,,arXiv 2606.20683 Table 7
+Claude Opus 4.5,mini-SWE-agent (extended thinking),76.8,384,,arXiv 2606.20683 Table 7 + text
+Claude Opus 4.5,OpenHands + CodeAct 2.1,77.6,388,,arXiv 2606.20683 Table 7 + text
+Claude Opus 4.5,Vendor scaffold,80.9,,,arXiv 2606.20683 Table 7

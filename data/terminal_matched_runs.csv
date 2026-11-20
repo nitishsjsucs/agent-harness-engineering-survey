@@ -1,0 +1,13 @@
+benchmark,n_tasks,system,model,resolved,resolved_pct,mean_time_s,source
+Claw-SWE-Bench Lite,80,mini-SWE-agent,DeepSeek-V4-Flash,47,58.75,476,"arXiv 2608.20485 Table 5 + Table 11"
+Claw-SWE-Bench Lite,80,mini-SWE-agent,DeepSeek-V4-Pro,45,56.25,476,"arXiv 2608.20485 Table 5 + Table 11"
+Claw-SWE-Bench Lite,80,SWE-agent,DeepSeek-V4-Flash,61,76.25,675,"arXiv 2608.20485 Table 5 + Table 11"
+Claw-SWE-Bench Lite,80,SWE-agent,DeepSeek-V4-Pro,62,77.50,712,"arXiv 2608.20485 Table 5 + Table 11"
+Claw-SWE-Bench Lite,80,OpenHands,DeepSeek-V4-Flash,55,68.75,600,"arXiv 2608.20485 Table 5 + Table 11"
+Claw-SWE-Bench Lite,80,OpenHands,DeepSeek-V4-Pro,54,67.50,653,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,mini-SWE-agent,DeepSeek-V4-Flash,167,55.67,294,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,mini-SWE-agent,DeepSeek-V4-Pro,167,55.67,389,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,SWE-agent,DeepSeek-V4-Flash,176,58.67,382,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,SWE-agent,DeepSeek-V4-Pro,175,58.33,525,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,OpenHands,DeepSeek-V4-Flash,155,51.67,501,"arXiv 2608.20485 Table 5 + Table 11"
+SWE-bench Lite,300,OpenHands,DeepSeek-V4-Pro,155,51.67,504,"arXiv 2608.20485 Table 5 + Table 11"

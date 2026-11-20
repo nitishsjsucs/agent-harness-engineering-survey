@@ -1,0 +1,12 @@
+benchmark,Action formulation,Feedback interpretation,Runtime management,State tracking,Verification,Recovery,Governance,Freshness
+SWE-bench / SWE-PolyBench,I,T,I,T,T,I,-,-
+Claw-SWE-Bench,I,T,I,T,T,I,-,I
+Terminal-Bench / TerminalWorld,E,E,T,T,T,T,-,I
+SetupBench,E,E,E,T,T,T,-,-
+LongCLI-Bench / GitTaskBench,E,E,I,E,T,I,-,-
+CLI-Gym,E,E,T,T,T,T,-,-
+debug-gym / OctoBench,T,E,I,T,E,E,-,-
+BashArena / ClawSafety,E,E,I,T,T,T,E,-
+LiveSQLBench,T,T,-,I,-,-,-,E
+WildClawBench,E,E,T,E,T,T,I,-
+ClawForge,E,E,T,E,T,I,-,-

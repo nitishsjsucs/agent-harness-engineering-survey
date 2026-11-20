@@ -1,0 +1,9 @@
+backbone,model_only,harness_low,harness_high,best_harness,span,source
+GPT-3.5,8.9,22.0,29.1,WebPilot,20.2,arXiv 2606.20683 Table 9
+GPT-4,14.9,20.2,33.0,SteP,18.1,arXiv 2606.20683 Table 9
+GPT-4 Turbo,16.5,33.3,45.7,AgentOccam,29.2,arXiv 2606.20683 Table 9
+GPT-4o,13.1,19.2,54.6,WebOperator,41.5,arXiv 2606.20683 Table 9
+DeepSeek-R1-Distill-Llama-8B,8.5,43.6,43.6,AgentSymbiotic,35.1,arXiv 2606.20683 Table 9
+Llama-3.2-1B,2.4,24.1,24.1,AgentSymbiotic framework,21.7,arXiv 2606.20683 Table 9
+Llama-3.1-8B,5.6,48.5,48.5,AgentSymbiotic,42.9,arXiv 2606.20683 Table 9
+Llama 3-70B,7.6,10.1,10.1,(unnamed),2.5,arXiv 2606.20683 Table 9

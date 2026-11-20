@@ -1,0 +1,82 @@
+{
+ "figures/charts/corpus_growth.png": [
+  2469,
+  1045
+ ],
+ "figures/charts/dgm_self_improvement.png": [
+  1869,
+  1188
+ ],
+ "figures/charts/harness_cost_tradeoff.png": [
+  2263,
+  1382
+ ],
+ "figures/charts/harness_vs_model_tb2.png": [
+  2687,
+  1430
+ ],
+ "figures/charts/leaderboard_reality_check.png": [
+  2796,
+  1382
+ ],
+ "figures/charts/memory_crud_coverage.png": [
+  2225,
+  1189
+ ],
+ "figures/charts/se_lifecycle_evidence.png": [
+  2445,
+  1189
+ ],
+ "figures/charts/terminal_benchmark_profile.png": [
+  2427,
+  1117
+ ],
+ "figures/charts/terminal_harness_vs_model.png": [
+  2511,
+  1238
+ ],
+ "figures/charts/terminal_observability.png": [
+  2428,
+  1527
+ ],
+ "figures/charts/webarena_harness_lift.png": [
+  2440,
+  1334
+ ],
+ "figures/diagrams/agent_lifecycle_loop.png": [
+  2227,
+  1177
+ ],
+ "figures/diagrams/agent_model_plus_harness.png": [
+  2142,
+  1329
+ ],
+ "figures/diagrams/four_paradigms.png": [
+  2312,
+  1236
+ ],
+ "figures/diagrams/harness_anatomy.png": [
+  2312,
+  1295
+ ],
+ "figures/diagrams/harness_report_card.png": [
+  2268,
+  1177
+ ],
+ "figures/diagrams/self_improvement_map.png": [
+  2312,
+  1278
+ ],
+ "figures/diagrams/surveys_at_a_glance.png": [
+  2312,
+  1160
+ ],
+ "figures/diagrams/task_to_harness.png": [
+  2278,
+  1194
+ ],
+ "figures/diagrams/terminal_agent_stack.png": [
+  2227,
+  1228
+ ]
+}

@@ -1,0 +1,15 @@
+model,harness,score,input_k,output_k,agent_min,timeout_pct,source
+GPT-5.3 Codex,Terminus 2,64.7,58.4,20.5,8.9,20.7,arXiv 2606.20683 Table 8
+GPT-5.3 Codex,Mux,74.6,238.7,5.7,5.5,8.1,arXiv 2606.20683 Table 8
+GPT-5.3 Codex,SageAgent,78.4,,,5.7,12.1,arXiv 2606.20683 Table 8
+Claude Opus 4.6,Claude Code,58.0,,,,,arXiv 2606.20683 Sec 7.3 text (Fig. 6)
+Claude Opus 4.6,Terminus 2,62.9,79.4,8.4,5.3,18.2,arXiv 2606.20683 Table 8
+Claude Opus 4.6,Mux,66.5,213.0,10.1,5.9,10.3,arXiv 2606.20683 Table 8
+Claude Opus 4.6,Terminus-KIRA,74.7,618.6,16.9,9.6,18.2,arXiv 2606.20683 Table 8
+Claude Opus 4.6,Meta-Harness,76.4,755.0,15.8,6.3,7.9,arXiv 2606.20683 Table 8
+Gemini 3.1 Pro,Gemini CLI,59.4,,,,,arXiv 2606.20683 Sec 7.3 text (Fig. 6)
+Gemini 3.1 Pro,Terminus-KIRA,74.8,257.5,22.1,6.5,9.7,arXiv 2606.20683 Table 8
+Gemini 3.1 Pro,TongAgents,80.2,,,11.1,21.1,arXiv 2606.20683 Table 8
+GPT-5,Mini-SWE-Agent,33.9,,,,,arXiv 2606.20683 Sec 7.3 text (Fig. 6)
+GPT-5,Terminus 2,35.2,,,,,arXiv 2606.20683 Sec 7.3 text (Fig. 6)
+GPT-5,Codex CLI,49.6,,,,,arXiv 2606.20683 Sec 7.3 text (Fig. 6)

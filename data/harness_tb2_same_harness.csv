@@ -1,0 +1,7 @@
+harness,model,generation_order,score,source
+Terminus 2,GPT-5,1,35.2,arXiv 2606.20683 Sec 7.3 text
+Terminus 2,GPT-5.2,2,54.0,arXiv 2606.20683 Sec 7.3 text
+Terminus 2,GPT-5.3 Codex,3,64.7,arXiv 2606.20683 Sec 7.3 text / Table 8
+Codex CLI,GPT-5,1,49.6,arXiv 2606.20683 Sec 7.3 text
+Codex CLI,GPT-5.2,2,62.9,arXiv 2606.20683 Sec 7.3 text
+Codex CLI,GPT-5.5,3,82.2,arXiv 2606.20683 Sec 7.3 text

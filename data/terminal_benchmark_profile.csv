@@ -1,0 +1,5 @@
+benchmark,tasks,outcome,P1_rule_invocation_failure,P2_helpful_feedback_use,P3_env_cmd_nonzero_exit,P4_state_tracking_error,P5_final_window_verification,P6_successful_recovery,P7_governance_review_trigger
+Terminal-Bench 2.1,241,52.6,0.0,82.1,12.5,14.7,29.5,79.9,0.5
+SetupBench,93,59.1,0.0,80.2,9.0,19.5,36.6,85.5,1.4
+LongCLI-Bench,21,23.8,0.0,76.4,6.8,7.7,23.8,67.8,4.5
+BashArena,640,41.8,0.0,76.3,13.7,23.3,66.2,67.0,3.0
